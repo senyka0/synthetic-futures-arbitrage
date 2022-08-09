@@ -6,14 +6,13 @@ import ccxt
 from math import floor
 from pytz import UTC
 exchange = ccxt.delta()
-exchange.apiKey = '' #API key from delta
-exchange.secret = '' #Secret key from delta
+exchange.apiKey = '7kCxukiJoGOhPzZjcPbSar7XyZ7X6O'
+exchange.secret = '68meE3Q9TNLj2BwCDmbBd1l8w5gmJvc54Vglxta5UYCitimUd55GTuKBLN6P'
 import telebot
-bot = telebot.TeleBot('') #put here your bot token to recieve messeges about trades
-k = 0.5  #minimum expected profit for trade
-minSum = 50 #minimum trade size    (50*0.5)=0.25$ (average cost of commissions is 0.20$) 
-daysToExpi = 3 #maximum days till expiration
-
+bot = telebot.TeleBot('5353542699:AAFwSmlvE2K8BT2BRWxC71cWYQI2M6jcr44')
+k = 0.5
+minSum = 100
+daysToExpi = 3
 while True:
     try:
         values = {i['contract_unit_currency']: float(i['contract_value']) for i in requests.get('https://api.delta.exchange/v2/products?contract_types=perpetual_futures').json()['result']}
@@ -58,6 +57,7 @@ while True:
                                         exchange.create_market_sell_order(tempDf['name'][1], contracts, params = {'leverage': 1})
                                         exchange.create_market_sell_order(f'{symb}USDT', contracts, params = {'leverage': 1})
                                         bot.send_message(501179740, f'Side: Long\nAsset: {symb}\nPrice: {prices[symb]}\nStrike: {strik}\nExpiration: {expi.strftime("%d/%m/%Y")}\n{tempDf["type"][0]}  ask: {tempDf["ask"][0]}/{tempDf["askSize"][0]}   bid: {tempDf["bid"][0]}/{tempDf["bidSize"][0]}\n{tempDf["type"][1]}  ask: {tempDf["ask"][1]}/{tempDf["askSize"][1]}   bid: {tempDf["bid"][1]}/{tempDf["bidSize"][1]}\n\nProfit: {(prices[symb]-long)/long*100}')
+                                        time.sleep(5)
                             elif (short-prices[symb])/prices[symb]*100>k and prices[symb]*(tempDf['askSize'][1]*values[symb])>minSum/3 and prices[symb]*(tempDf['bidSize'][0]*values[symb])>minSum/3:
                                 contracts = min(floor(exchange.fetch_balance()['free']['5']/(values[symb]*prices[symb]+tempDf['ask'][1]*values[symb]+tempDf['bid'][0]*values[symb])), tempDf['askSize'][1], tempDf['bidSize'][0])
                                 if contracts >= 1:
@@ -68,6 +68,7 @@ while True:
                                         exchange.create_market_sell_order(tempDf['name'][0], contracts, params = {'leverage': 1})
                                         exchange.create_market_buy_order(f'{symb}USDT', contracts, params = {'leverage': 1})
                                         bot.send_message(501179740, f'Side: Short\nAsset: {symb}\nPrice: {prices[symb]}\nStrike: {strik}\nExpiration: {expi.strftime("%d/%m/%Y")}\n{tempDf["type"][0]}  ask: {tempDf["ask"][0]}/{tempDf["askSize"][0]}   bid: {tempDf["bid"][0]}/{tempDf["bidSize"][0]}\n{tempDf["type"][1]}  ask: {tempDf["ask"][1]}/{tempDf["askSize"][1]}   bid: {tempDf["bid"][1]}/{tempDf["bidSize"][1]}\n\nProfit: {(short-prices[symb])/prices[symb]*100}')
+                                        time.sleep(5)
                         elif prices[symb]>strik:
                             long = strik+(tempDf['ask'][0]-tempDf['bid'][1])
                             short = strik+(tempDf['bid'][0]-tempDf['ask'][1])
@@ -81,6 +82,7 @@ while True:
                                         exchange.create_market_sell_order(tempDf['name'][1], contracts, params = {'leverage': 1})
                                         exchange.create_market_sell_order(f'{symb}USDT', contracts, params = {'leverage': 1})
                                         bot.send_message(501179740, f'Side: Long\nAsset: {symb}\nPrice: {prices[symb]}\nStrike: {strik}\nExpiration: {expi.strftime("%d/%m/%Y")}\n{tempDf["type"][0]}  ask: {tempDf["ask"][0]}/{tempDf["askSize"][0]}   bid: {tempDf["bid"][0]}/{tempDf["bidSize"][0]}\n{tempDf["type"][1]}  ask: {tempDf["ask"][1]}/{tempDf["askSize"][1]}   bid: {tempDf["bid"][1]}/{tempDf["bidSize"][1]}\n\nProfit: {(prices[symb]-long)/long*100}')
+                                        time.sleep(5)
                             elif (short-prices[symb])/prices[symb]*100>k and prices[symb]*(tempDf['askSize'][1]*values[symb])>minSum/3 and prices[symb]*(tempDf['bidSize'][0]*values[symb])>minSum/3:
                                 contracts = min(floor(exchange.fetch_balance()['free']['5']/(values[symb]*prices[symb]+tempDf['ask'][1]*values[symb]+tempDf['bid'][0]*values[symb])), tempDf['askSize'][1], tempDf['bidSize'][0])
                                 if contracts >= 1:
@@ -91,6 +93,7 @@ while True:
                                         exchange.create_market_sell_order(tempDf['name'][0], contracts, params = {'leverage': 1})
                                         exchange.create_market_buy_order(f'{symb}USDT', contracts, params = {'leverage': 1})
                                         bot.send_message(501179740, f'Side: Short\nAsset: {symb}\nPrice: {prices[symb]}\nStrike: {strik}\nExpiration: {expi.strftime("%d/%m/%Y")}\n{tempDf["type"][0]}  ask: {tempDf["ask"][0]}/{tempDf["askSize"][0]}   bid: {tempDf["bid"][0]}/{tempDf["bidSize"][0]}\n{tempDf["type"][1]}  ask: {tempDf["ask"][1]}/{tempDf["askSize"][1]}   bid: {tempDf["bid"][1]}/{tempDf["bidSize"][1]}\n\nProfit: {(short-prices[symb])/prices[symb]*100}')
+                                        time.sleep(5)
     except Exception as e:
         print(e)
         time.sleep(5)
