@@ -43,7 +43,7 @@ while True:
             for strik in list(set(newDf[newDf['symbol']==symb]['strike'])):
                 for expi in list(set(newDf[(newDf['symbol']==symb)&(newDf['strike']==strik)]['expiration'])):
                     tempDf = newDf[(newDf['symbol']==symb)&(newDf['strike']==strik)&(newDf['expiration']==expi)].sort_values(['type']).reset_index(drop=True)
-                    if len(tempDf)==2 and expi < datetime.datetime.now(datetime.timezone.utc)+datetime.timedelta(days=daysToExpi):
+                    if len(tempDf)==2 and expi < datetime.datetime.now(datetime.timezone.utc)+datetime.timedelta(days=daysToExpi) and expi.timestamp()-datetime.datetime.now(datetime.timezone.utc).timestamp()>20:
                         if prices[symb]<strik:
                             long = strik-(tempDf['bid'][1]-tempDf['ask'][0])
                             short = strik-(tempDf['ask'][1]-tempDf['bid'][0])
